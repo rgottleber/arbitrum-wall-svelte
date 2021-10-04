@@ -4,6 +4,7 @@
 	import GetPosts from '../components/GetPosts.svelte';
 	import MakePost from '../components/MakePost.svelte';
 	$: account = null;
+	$: chainID = null;
 	let web3Props;
 
 	onMount(async () => {
@@ -28,6 +29,7 @@
 			const accounts = await ethereum.request({ method: 'eth_accounts' });
 			if (accounts.length !== 0) {
 				account = accounts[0];
+				chainID = await signer.getChainId();
 			}
 		} catch (error) {
 			console.log(error);
@@ -39,6 +41,7 @@
 		await provider.send('eth_requestAccounts', []);
 		const signer = provider.getSigner();
 		account = await signer.getAddress();
+		chainID = await signer.getChainId();
 	}
 </script>
 
@@ -58,15 +61,21 @@
 	<p>
 		<button on:click={attachWallet}>Attach Wallet</button>
 	</p>
+{:else if chainID != 421611}
+	<h3>Please use the Arbitrum TestNet</h3>
+	<p>Network Name: Arbitrum Testnet</p>
+	<p>New RPC URL: https://rinkeby.arbitrum.io/rpc</p>
+	<p>Chain ID: 421611</p>
+	<p>Currency Symbol: ETH</p>
+	<p>Block Explorer URL: https://rinkeby.arbitrum.io/#/</p>
 {:else}
 	<MakePost {...web3Props} />
 	<GetPosts {...web3Props} />
 {/if}
 
 <style>
-	h1 {
-		text-align: center;
-	}
+	h1,
+	h3,
 	p {
 		text-align: center;
 	}
