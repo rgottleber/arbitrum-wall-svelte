@@ -2,7 +2,6 @@
 	export let account;
 	export let postContract;
 	export let owner;
-	import Wall from '../contracts/Wall.json';
 	import { ethers } from 'ethers';
 	$: message = 'Write your message here 📝';
 	$: mining = false;
@@ -14,7 +13,6 @@
 			value = ethers.utils.parseEther('0.01');
 		}
 		const postTxn = await postContract.post(message, { value: value });
-
 		mining = true;
 		await postTxn.wait();
 		mining = false;

@@ -13,7 +13,8 @@
 				address: post.from,
 				timestamp: new Date(post.timestamp * 1000),
 				message: post.message,
-				approved: post.approved
+				approved: post.approved,
+				id: post.id
 			});
 		});
 		return cleanedPosts;
@@ -22,13 +23,14 @@
 	const getPosts = async () => {
 		const posts = await postContract.getAllMessages();
 		allPosts = (await cleanPosts(posts)).reverse();
-		postContract.on('NewMessage', (from, timestamp, message, approved) => {
+		postContract.on('NewMessage', (from, timestamp, message, approved, id) => {
 			allPosts = [
 				{
 					address: from,
 					timestamp: new Date(timestamp * 1000),
 					message: message,
-					approved: approved
+					approved: approved,
+					id: id
 				},
 				...allPosts
 			];
