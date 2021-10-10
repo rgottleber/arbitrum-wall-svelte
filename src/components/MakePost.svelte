@@ -1,36 +1,23 @@
 <script>
-	export let provider;
-	export let signer;
-	export let network;
-	export let networkName;
-	export let contractAddress;
+	export let account;
+	export let postContract;
+	export let owner;
 	import Wall from '../contracts/Wall.json';
 	import { ethers } from 'ethers';
 	$: message = 'Write your message here 📝';
 	$: mining = false;
 	const post = async () => {
-		try {
-			const { ethereum } = window;
-			if (ethereum) {
-				const wallContract = new ethers.Contract(contractAddress, Wall.abi, signer);
-				const owner = await wallContract.owner();
-				const signerAddress = await signer.getAddress();
-				let value;
-				if (owner === signerAddress) {
-					value = 0;
-				} else {
-					value = ethers.utils.parseEther('0.01');
-				}
-				const postTxn = await wallContract.post(message, { value: value });
-
-				mining = true;
-				await postTxn.wait();
-				mining = false;
-			} else {
-			}
-		} catch (error) {
-			console.log(error);
+		let value;
+		if (owner === account) {
+			value = 0;
+		} else {
+			value = ethers.utils.parseEther('0.01');
 		}
+		const postTxn = await postContract.post(message, { value: value });
+
+		mining = true;
+		await postTxn.wait();
+		mining = false;
 	};
 </script>
 
